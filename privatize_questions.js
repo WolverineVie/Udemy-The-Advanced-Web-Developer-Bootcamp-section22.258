@@ -5,6 +5,7 @@ var selectedYear = Null;
 
 
 var yearData = birthData.filter(d => d.year === selectedYear);
+var yearDataBirths = yearData.filter(d => {return d.births});// JS rule can only return object del
 
 var selectedYear = function chooseYear(yearSelection){
       birthData.filter(d => d.year === yearSelection)
