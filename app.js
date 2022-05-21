@@ -1,26 +1,40 @@
 var width = 600,
     height = 600;
-var selectedYear = 2000;
-var radius = Math.min(width, height) / 2;
+sliderInputCode();
 
+var elementSliderId = document.querySelector("#sliderId");
+
+elementSliderId.addEventListener('change', function(){
+    document.querySelector("#sliderId").value = this.value;
+    //console.log(document.querySelector("#sliderId").value)
+  });
+var selectedYear =  parseInt(document.getElementById("sliderId").value);
+var radiusOPC = Math.min(width, height) / 2; //radiusOuterPieChart
 
 var yearData = birthData.filter(d => d.year === selectedYear);
 var yearDataBirths = yearData.map(d => {return d.births});
-var rangeDataYears = birthData.map(d => {return d.year});
+var quartalDatabirths = calcInnerPieData(yearDataBirths);
 
-var minDataYear = d3.min(rangeDataYears);
-var maxDataYear = d3.max(rangeDataYears);
+
+
 
 function sliderInputCode(){
+var rangeDataYears = birthData.map(d => {return d.year});
+var minDataYear = d3.min(rangeDataYears);
+var maxDataYear = d3.max(rangeDataYears);
 var sliderInput = document.getElementById("sliderId");
 sliderInput.setAttribute('min',minDataYear);
 sliderInput.setAttribute('max',maxDataYear);
+sliderInput.setAttribute('value',maxDataYear);
 var selectedYearV2 = parseInt(document.getElementById("sliderId").value);
 };
-sliderInputCode();
 
+createPiechart(radiusOPC,150,yearDataBirths); //outer Piechart
+createPiechart(150,50,quartalDatabirths);// inner Piechart
+
+function createPiechart(oR,iR,arrayData){
 var colorScale = d3.scaleOrdinal()
-                    .domain( yearDataBirths)
+                    .domain( arrayData)
                     .range(d3.schemeCategory20);
 
 var svg = d3.select('svg')
@@ -30,17 +44,42 @@ var svg = d3.select('svg')
             .attr('transform','translate('+ width/2 + ','+ height/2 + ')')
             .classed('chart', true);
 
-var pie = d3.pie();
+var pie = d3.pie()
+              .sort(null);
 var arc = d3.arc()
-              .innerRadius(150)
-              .outerRadius(radius);
+              .innerRadius(iR)
+              .outerRadius(oR);
 
 var arcs = svg.selectAll('.arc')
-              .data(pie(yearDataBirths))
+              .data(pie(arrayData))
               .enter()
               .append('g')
-
               .attr('class','arc')
                 .append('path')
                 .attr('fill', (d,i) => colorScale(i))
                 .attr('d', arc);
+}
+
+function calcInnerPieData(array){
+  if (array.length = 12){
+      arr1 = array.slice(0,3);
+      sumArr1 = sumUp(arr1);
+      arr2 = array.slice(3,6);
+      sumArr2 = sumUp(arr2);
+      arr3 = array.slice(6,9);
+      sumArr3 = sumUp(arr3);
+      arr4 = array.slice(9,12);
+      sumArr4 = sumUp(arr4);
+      return [sumArr1,sumArr2,sumArr3,sumArr4]
+  }
+  else console.log("Array does not have size of 12");
+  //throw 'monthlenght other than 12'
+}
+
+function sumUp(arr){
+  var res = 0;
+  for (i=0; i < arr.length; i++) {
+              res += arr[i]
+  }
+  return res
+}
