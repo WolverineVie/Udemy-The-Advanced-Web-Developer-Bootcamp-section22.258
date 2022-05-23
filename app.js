@@ -2,12 +2,6 @@ var width = 600,
     height = 600;
 sliderInputCode();
 
-var elementSliderId = document.querySelector("#sliderId");
-
-elementSliderId.addEventListener('change', function(){
-    document.querySelector("#sliderId").value = this.value;
-    //console.log(document.querySelector("#sliderId").value)
-  });
 var selectedYear =  parseInt(document.getElementById("sliderId").value);
 var radiusOPC = Math.min(width, height) / 2; //radiusOuterPieChart
 
@@ -15,22 +9,34 @@ var yearData = birthData.filter(d => d.year === selectedYear);
 var yearDataBirths = yearData.map(d => {return d.births});
 var quartalDatabirths = calcInnerPieData(yearDataBirths);
 
-
-
+createPiechart(radiusOPC,150,yearDataBirths); //outer Piechart
+createPiechart(150,50,quartalDatabirths);// inner Piechart
 
 function sliderInputCode(){
 var rangeDataYears = birthData.map(d => {return d.year});
 var minDataYear = d3.min(rangeDataYears);
 var maxDataYear = d3.max(rangeDataYears);
-var sliderInput = document.getElementById("sliderId");
-sliderInput.setAttribute('min',minDataYear);
-sliderInput.setAttribute('max',maxDataYear);
-sliderInput.setAttribute('value',maxDataYear);
-var selectedYearV2 = parseInt(document.getElementById("sliderId").value);
+  d3.select('#sliderId')
+  .property('min', minDataYear)
+  .property('max', maxDataYear)
+  .property('value', minDataYear)
 };
 
-createPiechart(radiusOPC,150,yearDataBirths); //outer Piechart
-createPiechart(150,50,quartalDatabirths);// inner Piechart
+d3.select('#sliderId')
+.on('input.one', function(){//input.one -> .one is namespace needed if element has same multiple listeners
+  var eventVal =  parseInt(d3.event.target.value);
+  var test2 = innerPieChartData(eventVal);
+  createPiechart(150,50,innerPieChartData(eventVal));
+  console.log(eventVal);
+  console.log(test2)
+});
+
+d3.select('#sliderId')
+.on('input.two',function(){ //input.two -> .two is namespace needed if element has same multiple listeners
+var eventVal =  parseInt(d3.event.target.value);
+createPiechart(radiusOPC,150,outerPieChartData(eventVal));
+  console.log('outerPie:' +eventVal);
+});
 
 function createPiechart(oR,iR,arrayData){
 var colorScale = d3.scaleOrdinal()
@@ -82,4 +88,16 @@ function sumUp(arr){
               res += arr[i]
   }
   return res
+}
+
+function outerPieChartData(value){
+  var yearData = birthData.filter(d => d.year === value);
+  var yearDataBirths = yearData.map(d => {return d.births});
+  return yearDataBirths;
+}
+function innerPieChartData(value){
+  var yearData = birthData.filter(d => d.year === value);
+  var yearDataBirths = yearData.map(d => {return d.births});
+  var quartalDatabirths = calcInnerPieData(yearDataBirths);
+  return quartalDatabirths;
 }
