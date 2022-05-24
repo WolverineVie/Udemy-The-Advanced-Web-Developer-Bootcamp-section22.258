@@ -1,5 +1,5 @@
 var width = 600,
-    height = 600;
+    height = 800;
 sliderInputCode();
 
 var selectedYear =  parseInt(document.getElementById("sliderId").value);
@@ -13,13 +13,21 @@ var svg = d3.select('svg')
 
     svg
     .append('g')
-      .attr('transform','translate('+ width/2 + ','+ height/2 + ')')
+      .attr('transform','translate('+ width/2 + ','+ height/1.8 + ')')
       .classed('chart', true);
 
     svg
     .append('g')
-      .attr('transform','translate('+ width/2 + ','+ height/2 + ')')
+      .attr('transform','translate('+ width/2 + ','+ height/1.8 + ')')
       .classed('innerChart', true);
+
+    svg
+    .append("text")
+      .classed("title", true)
+      .attr("x", width / 2)
+      .attr("y", 30)
+      .style("font-size", "2em")
+      .style("text-anchor", "middle")
 
 createPiechart(radiusOPC,150,selectedyearBirthData);
 
@@ -75,8 +83,8 @@ function createPiechart(oR,iR,arrayData){
                   .attr('d', arc);
 
 var innerArcs = d3.select('.innerChart')
-              .selectAll('.arc')
-              .data(innerPie(innerPieArrayData))
+                .selectAll('.arc')
+                .data(innerPie(innerPieArrayData))
 
           innerArcs
               .enter()
@@ -85,6 +93,10 @@ var innerArcs = d3.select('.innerChart')
                 .attr('fill', (d,i) => colorScale(i))
               .merge(innerArcs)
                 .attr('d', innerArc)
+
+var selectedYear = parseInt(document.getElementById("sliderId").value);
+var pieChartTitel = d3.select(".title")
+                    .text("Births by months and quarter for " + selectedYear);
 }
 
 function calcInnerPieData(array){
@@ -100,7 +112,7 @@ function calcInnerPieData(array){
       return [sumArr1,sumArr2,sumArr3,sumArr4];
     }
   else{
-    console.log("Arraylenght needs to be 12");
+    console.log("Arraylength needs to be 12");
   }
 }
 
