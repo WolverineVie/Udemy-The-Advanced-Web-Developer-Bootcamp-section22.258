@@ -100,7 +100,7 @@ function calcInnerPieData(array){
       return [sumArr1,sumArr2,sumArr3,sumArr4];
     }
   else{
-    document.write("arraylenght needs to be 12");
+    console.log("Arraylenght needs to be 12");
   }
 }
 
